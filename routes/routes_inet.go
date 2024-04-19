@@ -10,8 +10,9 @@ import (
 func InetRoutes(app *fiber.App) {
 	app.Use(basicauth.New(basicauth.Config{
 		Users: map[string]string{
-			"john":  "doe",
-			"admin": "123456",
+			"john":    "doe",
+			"admin":   "123456",
+			"gofiber": "21022566",
 		},
 	}))
 
@@ -31,4 +32,22 @@ func InetRoutes(app *fiber.App) {
 
 	v2 := api.Group("/v2")
 	v2.Get("/", c.HelloTest)
+
+	//Test 5.0
+	authV1 := basicauth.New(basicauth.Config{
+		Users: map[string]string{
+			"gofiber": "21022566",
+		},
+	})
+
+	//Test 5.1
+	v1.Get("/fact/:number", c.FindFacts, authV1)
+
+	//Test 5.2
+	v3 := api.Group("/v3")
+
+	v3.Post("/bam", c.ConvertAscii, authV1)
+
+	// Test 6
+	v1.Post("/register", c.RegisterForm)
 }
