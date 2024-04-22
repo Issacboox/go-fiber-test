@@ -403,7 +403,7 @@ func GetProfile(c *fiber.Ctx) error {
 	var prof []m.Profile
 	db := db.DBConn
 
-	result := db.Find(&prof, "emp_id = ?", search)
+	result := db.Find(&prof, "employee_id = ?", search)
 
 	// returns found records count, equals `len(users)
 	if result.RowsAffected == 0 {
