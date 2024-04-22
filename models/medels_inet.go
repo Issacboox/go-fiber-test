@@ -41,18 +41,18 @@ type Dogs struct {
 }
 
 type DogsRes struct {
-	Name        string `json:"name"`
-	DogID       int    `json:"dog_id"`
-	Type        string `json:"type"`
-	Sum_Red     int    `json:"sum_red"`
-	Sum_Green   int    `json:"sum_green"`
-	Sum_Pink    int    `json:"sum_pink"`
-	Sum_NoColor int    `json:"sum_nocolor"`
+	Name  string `json:"name"`
+	DogID int    `json:"dog_id"`
+	Type  string `json:"type"`
 }
 type ResultData struct {
-	Data  []DogsRes `json:"data"`
-	Name  string    `json:"name"`
-	Count int       `json:"count"`
+	Data        []DogsRes `json:"data"`
+	Name        string    `json:"name"`
+	Count       int       `json:"count"`
+	Sum_Red     int       `json:"sum_red"`
+	Sum_Green   int       `json:"sum_green"`
+	Sum_Pink    int       `json:"sum_pink"`
+	Sum_NoColor int       `json:"sum_nocolor"`
 }
 
 // 7.0.1 Create Database for Store Company Data
