@@ -14,6 +14,7 @@ type User struct {
 	IsActive *bool  `json:"isactive" validate:"required"`
 	Email    string `json:"email,omitempty" validate:"required,email,min=3,max=32"`
 }
+
 type BusinessType string
 
 const (
@@ -40,7 +41,27 @@ type Dogs struct {
 }
 
 type DogsRes struct {
-	Name  string `json:"name"`
-	DogID int    `json:"dog_id"`
-	Type  string `json:"type"`
+	Name        string `json:"name"`
+	DogID       int    `json:"dog_id"`
+	Type        string `json:"type"`
+	Sum_Red     int    `json:"sum_red"`
+	Sum_Green   int    `json:"sum_green"`
+	Sum_Pink    int    `json:"sum_pink"`
+	Sum_NoColor int    `json:"sum_nocolor"`
+}
+type ResultData struct {
+	Data  []DogsRes `json:"data"`
+	Name  string    `json:"name"`
+	Count int       `json:"count"`
+}
+
+// 7.0.1 Create Database for Store Company Data
+type Company struct {
+	gorm.Model
+	CompanyName    string `json:"company_name" validate:"required,min=3,max=20"`
+	CompanyAddress string `json:"company_address" validate:"required,min=9,max=150"`
+	Tel            string `json:"tel" validate:"required,min=9,max=10"`
+	Email          string `json:"email,omitempty" validate:"required,email,min=3,max=32"`
+	WebsiteLink    string `json:"website" validate:"required,min=2,max=30,website"`
+	Employee       int    `json:"emp_amount"`
 }

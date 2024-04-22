@@ -10,7 +10,6 @@ import (
 	// "regexp"
 	"strconv"
 	// "unicode"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
@@ -146,7 +145,7 @@ func GetDogs(c *fiber.Ctx) error {
 	var dogs []m.Dogs
 	db := db.DBConn
 
-	db.Scopes(DogIDGreaterThan100).Find(&dogs)
+	db.Find(&dogs)
 	return c.Status(200).JSON(dogs)
 }
 
@@ -236,15 +235,155 @@ func GetDogsJson(c *fiber.Ctx) error {
 		// sumAmount += v.Amount
 	}
 
-	type ResultData struct {
-		Data  []m.DogsRes `json:"data"`
-		Name  string      `json:"name"`
-		Count int         `json:"count"`
-	}
-	r := ResultData{
+	r := m.ResultData{
 		Data:  dataResults,
 		Name:  "golang-test",
 		Count: len(dogs), //หาผลรวม,
 	}
+	return c.Status(200).JSON(r)
+}
+
+// Company
+// Get Company
+func GetCompany(c *fiber.Ctx) error {
+	var comp []m.Company
+	db := db.DBConn
+
+	db.Find(&comp)
+	return c.Status(200).JSON(comp)
+}
+
+// Get Filter Company
+func GetCompanyFilter(c *fiber.Ctx) error {
+	search := strings.TrimSpace(c.Query("search"))
+	var comp []m.Company
+	db := db.DBConn
+
+	result := db.Find(&comp, "id = ?", search)
+
+	// returns found records count, equals `len(users)
+	if result.RowsAffected == 0 {
+		return c.SendStatus(404)
+	}
+	return c.Status(200).JSON(&comp)
+}
+
+// Post Company
+func AddCompany(c *fiber.Ctx) error {
+	var comp m.Company
+	db := db.DBConn
+
+	if err := c.BodyParser(&comp); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+	validate := validator.New()
+
+	// Register custom validation functions
+	// validate.RegisterValidation("viladate-username", isValidUsername)
+	validate.RegisterValidation("website", isValidWebsiteLink)
+
+	db.Create(&comp)
+	return c.Status(201).JSON(comp)
+}
+
+// Put Company
+func UpdateCompany(c *fiber.Ctx) error {
+	var comp m.Company
+	id := c.Params("id")
+	db := db.DBConn
+
+	if err := c.BodyParser(&comp); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+
+	db.Where("id = ?", id).Updates(&comp)
+	return c.Status(200).JSON(comp)
+}
+
+// Delete Company
+func RemoveCompany(c *fiber.Ctx) error {
+	id := c.Params("id")
+	db := db.DBConn
+	var comp m.Company
+
+	result := db.Delete(&comp, id)
+
+	if result.RowsAffected == 0 {
+		return c.SendStatus(404)
+	}
+
+	return c.SendStatus(200)
+}
+
+// Get Deleted Dogs
+func GetDeletedDogs(c *fiber.Ctx) error {
+	var dogs []m.Dogs
+	db := db.DBConn
+
+	db.Unscoped().Where("deleted_at IS NOT NULL").Find(&dogs)
+	return c.Status(200).JSON(dogs)
+}
+
+func DogIDGreaterThan50LessThan100(db *gorm.DB) *gorm.DB {
+	return db.Where("dog_id > ? AND dog_id < ?", 50, 100)
+}
+
+// 💭 Read only
+func GetDogs7(c *fiber.Ctx) error {
+	var dogs []m.Dogs
+	db := db.DBConn
+
+	db.Scopes(DogIDGreaterThan50LessThan100).Find(&dogs)
+	return c.Status(200).JSON(dogs)
+}
+
+// Json Dog
+// Get Json
+func GetDogsColorJson(c *fiber.Ctx) error {
+	db := db.DBConn
+	var dogs []m.Dogs
+
+	db.Find(&dogs) //10ตัว
+
+	var dataResults []m.DogsRes
+	for _, v := range dogs { //1 inet 112 //2 inet1 113
+		typeStr := ""
+		sum_red := 0
+		sum_green := 0
+		sum_pink := 0
+		sum_nocolor := 0
+		if v.DogID >= 10 && v.DogID <= 50 {
+			typeStr = "red"
+			sum_red++
+		} else if v.DogID >= 100 && v.DogID <= 150 {
+			typeStr = "green"
+			sum_green++
+		} else if v.DogID >= 200 && v.DogID <= 250 {
+			typeStr = "pink"
+			sum_pink++
+		} else {
+			typeStr = "no color"
+			sum_nocolor++
+		}
+
+		d := m.DogsRes{
+			Name:        v.Name,  //inet1
+			DogID:       v.DogID, //113
+			Type:        typeStr,
+			Sum_Red:     sum_red,
+			Sum_Green:   sum_green,
+			Sum_Pink:    sum_pink,
+			Sum_NoColor: sum_nocolor,
+		}
+		dataResults = append(dataResults, d)
+		// sumAmount += v.Amount
+	}
+
+	r := m.ResultData{
+		Data:  dataResults,
+		Name:  "golang-test",
+		Count: len(dogs), //หาผลรวม,
+	}
+
 	return c.Status(200).JSON(r)
 }
