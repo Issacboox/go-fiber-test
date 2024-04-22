@@ -1,6 +1,7 @@
 package models
 
 import (
+	// "time"
 	"gorm.io/gorm"
 )
 
@@ -64,4 +65,41 @@ type Company struct {
 	Email          string `json:"email,omitempty" validate:"required,email,min=3,max=32"`
 	WebsiteLink    string `json:"website" validate:"required,min=2,max=30,website"`
 	Employee       int    `json:"emp_amount"`
+}
+
+//	type Profile struct {
+//		gorm.Model
+//		EmployeeID string    `json:"emp_id"`
+//		Name       string    `json:"name"`
+//		LastName   string    `json:"last_name"`
+//		Birthday   time.Time `json:"birthday"`
+//		Age        int       `json:"age"`
+//		Email      string    `json:"email,omitempty" validate:"required,email,min=3,max=32"`
+//		Tel        string    `json:"tel" validate:"required,min=9,max=10"`
+//	}
+type Profile struct {
+	gorm.Model
+	EmployeeID string `json:"emp_id"`
+	Name       string `json:"name"`
+	LastName   string `json:"last_name"`
+	Birthday   string `json:"birthday"`
+	Age        int    `json:"age"`
+	Email      string `json:"email,omitempty" validate:"required,email,min=3,max=32"`
+	Tel        string `json:"tel" validate:"required,min=9,max=10"`
+}
+
+type ProfileRes struct {
+	Name string `json:"name"`
+	Age  int    `json:"dog_id"`
+	Type string `json:"type"`
+}
+type ResultProfileData struct {
+	Data         []ProfileRes `json:"data"`
+	Name         string       `json:"name"`
+	Count        int          `json:"count"`
+	GenZ         int          `json:"gen_z"`
+	GenX         int          `json:"gen_x"`
+	GenY         int          `json:"gen_y"`
+	BabyBoomer   int          `json:"baby_boomer"`
+	GIGeneration int          `json:"gi_generation"`
 }

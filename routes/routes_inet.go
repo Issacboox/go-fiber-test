@@ -20,6 +20,7 @@ func InetRoutes(app *fiber.App) {
 	authV1 := basicauth.New(basicauth.Config{
 		Users: map[string]string{
 			"gofiber": "21022566",
+			"testgo":  "23012023",
 		},
 	})
 
@@ -71,4 +72,11 @@ func InetRoutes(app *fiber.App) {
 	company.Put("/:id", c.UpdateCompany)
 	company.Delete("/:id", c.RemoveCompany)
 
+	//CRUD profile
+	profile := v1.Group("/profile")
+	profile.Get("", c.GetProfiles)
+	profile.Get("/filter", c.GetProfile, authV1)
+	profile.Post("/", c.AddProfile, authV1)
+	profile.Put("/:id", c.UpdateProfile, authV1)
+	profile.Delete("/:id", c.RemoveProfile, authV1)
 }

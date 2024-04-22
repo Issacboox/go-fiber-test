@@ -386,4 +386,136 @@ func GetDogsColorJson(c *fiber.Ctx) error {
 	}
 
 	return c.Status(200).JSON(r)
+
+}
+
+// CRUD Profile
+func GetProfiles(c *fiber.Ctx) error {
+	var prof []m.Profile
+	db := db.DBConn
+
+	db.Find(&prof)
+	return c.Status(200).JSON(prof)
+}
+func GetProfile(c *fiber.Ctx) error {
+	search := strings.TrimSpace(c.Query("search"))
+	var prof []m.Profile
+	db := db.DBConn
+
+	result := db.Find(&prof, "emp_id = ?", search)
+
+	// returns found records count, equals `len(users)
+	if result.RowsAffected == 0 {
+		return c.SendStatus(404)
+	}
+	return c.Status(200).JSON(&prof)
+}
+
+// 🥛 Create
+func AddProfile(c *fiber.Ctx) error {
+	var prof m.Profile
+	db := db.DBConn
+
+	if err := c.BodyParser(&prof); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+
+	db.Create(&prof)
+	return c.Status(201).JSON(prof)
+}
+
+// 🔱 Update
+func UpdateProfile(c *fiber.Ctx) error {
+	var prof m.Profile
+	id := c.Params("id")
+	db := db.DBConn
+
+	if err := c.BodyParser(&prof); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+
+	db.Where("id = ?", id).Updates(&prof)
+	return c.Status(200).JSON(prof)
+}
+
+// 🗑️ Delete
+func RemoveProfile(c *fiber.Ctx) error {
+	id := c.Params("id")
+	db := db.DBConn
+	var prof m.Profile
+
+	result := db.Delete(&prof, id)
+
+	if result.RowsAffected == 0 {
+		return c.SendStatus(404)
+	}
+
+	return c.SendStatus(200)
+}
+
+func GetProfileJson(c *fiber.Ctx) error {
+	db := db.DBConn
+	var prof []m.Profile
+
+	db.Find(&prof) // 10 ตัว
+
+	var dataProResults []m.ProfileRes
+	GenZ := 0
+	GenY := 0
+	GenX := 0
+	BabyBoomer := 0
+	GIGeneration := 0
+	for _, v := range prof {
+		typeStr := ""
+		if v.Age < 24 {
+			typeStr = "GenZ"
+			GenZ++
+		} else if v.Age >= 24 && v.Age <= 41 {
+			typeStr = "GenY"
+			GenY++
+		} else if v.Age >= 42 && v.Age <= 56 {
+			typeStr = "GenX"
+			GenX++
+		} else if v.Age >= 57 && v.Age <= 75 {
+			typeStr = "Baby Boomer"
+			BabyBoomer++
+		} else {
+			typeStr = "G.I. Generation"
+			GIGeneration++
+		}
+
+		d := m.ProfileRes{
+			Name: v.Name,
+			Age:  v.Age,
+			Type: typeStr,
+		}
+		dataProResults = append(dataProResults, d)
+	}
+
+	r := m.ResultProfileData{
+		Data:         dataProResults,
+		Name:         "golang-test",
+		Count:        len(dataProResults),
+		GenZ:         GenZ,
+		GenX:         GenX,
+		GenY:         GenY,
+		BabyBoomer:   BabyBoomer,
+		GIGeneration: GIGeneration,
+	}
+
+	return c.Status(200).JSON(r)
+}
+
+func SearchProfile(c *fiber.Ctx) error {
+	search := strings.TrimSpace(c.Query("search"))
+	var prof []m.Profile
+	db := db.DBConn
+
+	result := db.Where("emp_id LIKE ? OR name LIKE ? OR last_name LIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%").Find(&prof)
+
+	// returns found records count, equals `len(users)
+	if result.RowsAffected == 0 {
+		return c.SendStatus(404)
+	}
+	return c.Status(200).JSON(&prof)
 }
