@@ -1,5 +1,9 @@
 package models
 
+import (
+	"gorm.io/gorm"
+)
+
 type Person struct {
 	Name string `json:"name"`
 	Pass string `json:"pass"`
@@ -27,4 +31,10 @@ type Register struct {
 	TelephoneNumber string `json:"telephonenumber" validate:"required,min=9,max=10"`
 	BusinessType    string `json:"businesstype" validate:"required"`
 	WebsiteLink     string `json:"website" validate:"required,min=2,max=30,viladate-website"`
+}
+
+type Dogs struct {
+	gorm.Model
+	Name  string `json:"name"`
+	DogID int    `json:"dog_id"`
 }

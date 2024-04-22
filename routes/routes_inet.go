@@ -50,4 +50,5 @@ func InetRoutes(app *fiber.App) {
 
 	// Test 6
 	v1.Post("/register", c.RegisterForm)
+
 }
