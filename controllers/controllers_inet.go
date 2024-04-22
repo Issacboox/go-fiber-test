@@ -4,6 +4,7 @@ import (
 	db "go-fiber-test/database"
 	m "go-fiber-test/models"
 	"log"
+	"math/rand"
 	"regexp"
 	"strings"
 
@@ -420,8 +421,25 @@ func AddProfile(c *fiber.Ctx) error {
 		return c.Status(503).SendString(err.Error())
 	}
 
+	// Generate a random 5-digit INET number
+	inet := generateRandomInet()
+
+	// Set the emp_id to the generated INET number
+	prof.EmployeeID = inet
+
 	db.Create(&prof)
 	return c.Status(201).JSON(prof)
+}
+
+func generateRandomInet() string {
+	// Generate a random 5-digit number
+	randNum := rand.Intn(99999) + 10000
+
+	// Convert the number to a string
+	inet := strconv.Itoa(randNum)
+
+	// Return the INET number
+	return inet
 }
 
 // 🔱 Update
@@ -511,7 +529,7 @@ func SearchProfile(c *fiber.Ctx) error {
 	var prof []m.Profile
 	db := db.DBConn
 
-	result := db.Where("emp_id LIKE ? OR name LIKE ? OR last_name LIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%").Find(&prof)
+	result := db.Where("employee_id LIKE ? OR name LIKE ? OR last_name LIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%").Find(&prof)
 
 	// returns found records count, equals `len(users)
 	if result.RowsAffected == 0 {

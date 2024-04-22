@@ -90,7 +90,7 @@ type Profile struct {
 
 type ProfileRes struct {
 	Name string `json:"name"`
-	Age  int    `json:"dog_id"`
+	Age  int    `json:"age"`
 	Type string `json:"type"`
 }
 type ResultProfileData struct {

@@ -79,4 +79,9 @@ func InetRoutes(app *fiber.App) {
 	profile.Post("/", c.AddProfile, authV1)
 	profile.Put("/:id", c.UpdateProfile, authV1)
 	profile.Delete("/:id", c.RemoveProfile, authV1)
+
+	//Search by employee_id, name ,lastname
+	profile.Get("/find", c.SearchProfile, authV1)
+	profile.Get("/json", c.GetProfileJson, authV1)
+
 }
