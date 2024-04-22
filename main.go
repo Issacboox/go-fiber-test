@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	database "go-fiber-test/database"
+	db "go-fiber-test/database"
 	m "go-fiber-test/models"
 	"go-fiber-test/routes"
 
@@ -21,12 +21,12 @@ func initDatabase() {
 		"golang_test",
 	)
 	var err error
-	database.DBConn, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db.DBConn, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("Database connected!")
-	database.DBConn.AutoMigrate(&m.Dogs{})
+	db.DBConn.AutoMigrate(&m.Dogs{})
 }
 
 func main() {

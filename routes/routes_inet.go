@@ -30,6 +30,15 @@ func InetRoutes(app *fiber.App) {
 	// Validate Test
 	v1.Post("/valid", c.ValidTest)
 
+	//CRUD dogs
+	dog := v1.Group("/dog")
+	dog.Get("", c.GetDogs)
+	dog.Get("/filter", c.GetDog)
+	dog.Get("/json", c.GetDogsJson)
+	dog.Post("/", c.AddDog)
+	dog.Put("/:id", c.UpdateDog)
+	dog.Delete("/:id", c.RemoveDog)
+
 	v2 := api.Group("/v2")
 	v2.Get("/", c.HelloTest)
 
