@@ -67,23 +67,13 @@ type Company struct {
 	Employee       int    `json:"emp_amount"`
 }
 
-//	type Profile struct {
-//		gorm.Model
-//		EmployeeID string    `json:"emp_id"`
-//		Name       string    `json:"name"`
-//		LastName   string    `json:"last_name"`
-//		Birthday   time.Time `json:"birthday"`
-//		Age        int       `json:"age"`
-//		Email      string    `json:"email,omitempty" validate:"required,email,min=3,max=32"`
-//		Tel        string    `json:"tel" validate:"required,min=9,max=10"`
-//	}
 type Profile struct {
 	gorm.Model
-	EmployeeID string `json:"emp_id"`
-	Name       string `json:"name"`
-	LastName   string `json:"last_name"`
-	Birthday   string `json:"birthday"`
-	Age        int    `json:"age"`
+	EmployeeID string `json:"emp_id" validate:"required"`
+	Name       string `json:"name" validate:"required"`
+	LastName   string `json:"last_name" validate:"required"`
+	Birthday   string `json:"birthday" validate:"required"`
+	Age        int    `json:"age"  validate:"required"`
 	Email      string `json:"email,omitempty" validate:"required,email,min=3,max=32"`
 	Tel        string `json:"tel" validate:"required,min=9,max=10"`
 }

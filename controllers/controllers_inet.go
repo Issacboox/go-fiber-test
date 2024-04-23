@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"regexp"
 	"strings"
+	"time"
 
 	// "regexp"
 	"strconv"
@@ -132,7 +133,7 @@ func isValidUsername(fl validator.FieldLevel) bool {
 
 func isValidWebsiteLink(fl validator.FieldLevel) bool {
 	website := fl.Field().String()
-	return regexp.MustCompile(`^[a-z0-9-]{2,28}\.[a-z]{2,20}$`).MatchString(website)
+	return regexp.MustCompile(`^[a-z0-9-]{2,28}\.[a-z]{2,5}$`).MatchString(website)
 }
 
 // CRUD ⌨️
@@ -280,8 +281,15 @@ func AddCompany(c *fiber.Ctx) error {
 	validate := validator.New()
 
 	// Register custom validation functions
-	// validate.RegisterValidation("viladate-username", isValidUsername)
 	validate.RegisterValidation("website", isValidWebsiteLink)
+
+	if errors := validate.Struct(comp); errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": errors.Error(),
+		})
+	}
+
+	// return c.JSON(account)
 
 	db.Create(&comp)
 	return c.Status(201).JSON(comp)
@@ -423,12 +431,27 @@ func AddProfile(c *fiber.Ctx) error {
 
 	// Generate a random 5-digit INET number
 	inet := generateRandomInet()
-
+	// Calculate age from birthday
+	age := calculateAge(prof.Birthday)
+	prof.Age = age
 	// Set the emp_id to the generated INET number
 	prof.EmployeeID = inet
 
 	db.Create(&prof)
-	return c.Status(201).JSON(prof)
+	return c.Status(fiber.StatusCreated).JSON(prof)
+}
+
+func calculateAge(birthday string) int {
+	// Parse the birthday string into a time.Time object
+	// formate YYYY-MM-DD
+	birthdate, err := time.Parse("2006-01-02", birthday)
+	if err != nil {
+		return 0
+	}
+	// Calculate the age by subtracting the birthdate from the current time
+	age := int(time.Since(birthdate).Hours() / (24 * 365))
+
+	return age
 }
 
 func generateRandomInet() string {
