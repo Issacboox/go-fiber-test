@@ -406,6 +406,7 @@ func GetProfiles(c *fiber.Ctx) error {
 	db.Find(&prof)
 	return c.Status(200).JSON(prof)
 }
+
 func GetProfile(c *fiber.Ctx) error {
 	search := strings.TrimSpace(c.Query("search"))
 	var prof []m.Profile
@@ -448,7 +449,6 @@ func calculateAge(birthday string) int {
 	if err != nil {
 		return 0
 	}
-	// Calculate the age by subtracting the birthdate from the current time
 	age := int(time.Since(birthdate).Hours() / (24 * 365))
 
 	return age
