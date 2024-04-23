@@ -57,10 +57,10 @@ func InetRoutes(app *fiber.App) {
 	v2.Get("/", c.HelloTest)
 
 	//Test 5.1
-	v1.Get("/fact/:number", c.FindFacts, authV1)
+	v1.Get("/fact/:number", authV1, c.FindFacts)
 	//Test 5.2
 	v3 := api.Group("/v3")
-	v3.Post("/bam", c.ConvertAscii, authV1)
+	v3.Post("/bam", authV1, c.ConvertAscii)
 	// Test 6
 	v1.Post("/register", c.RegisterForm)
 
@@ -75,13 +75,13 @@ func InetRoutes(app *fiber.App) {
 	//CRUD profile
 	profile := v1.Group("/profile")
 	profile.Get("", c.GetProfiles)
-	profile.Get("/filter", c.GetProfile, authV1)
-	profile.Post("/", c.AddProfile, authV1)
-	profile.Put("/:id", c.UpdateProfile, authV1)
-	profile.Delete("/:id", c.RemoveProfile, authV1)
+	profile.Get("/filter", authV1, c.GetProfile)
+	profile.Post("/", authV1, c.AddProfile)
+	profile.Put("/:id", authV1, c.UpdateProfile)
+	profile.Delete("/:id", authV1, c.RemoveProfile)
 
 	//Search by employee_id, name ,lastname
-	profile.Get("/find", c.SearchProfile, authV1)
-	profile.Get("/json", c.GetProfileJson, authV1)
+	profile.Get("/find", authV1, c.SearchProfile)
+	profile.Get("/json", authV1, c.GetProfileJson)
 
 }
